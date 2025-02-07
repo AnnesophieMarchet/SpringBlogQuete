@@ -1,0 +1,32 @@
+#GET http://localhost:8080/articles
+#Content-Type: application/json
+
+# GET http://localhost:8080/articles/10
+#Content-Type: application/json
+
+
+# POST http://localhost:8080/articles
+#Content-Type: application/json
+#
+#    {
+#    "title": "title 1",
+#    "content": "content 1"
+#    }
+
+
+
+
+
+
+
+#PUT http://localhost:8080/articles/1
+#Content-Type: application/json
+#
+#{
+#"title": "title 1 test put",
+#"content": "content 1 edited"
+#}
+
+
+DELETE http://localhost:8080/articles/1
+Content-Type: application/json
