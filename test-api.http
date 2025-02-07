@@ -28,5 +28,29 @@
 #}
 
 
-DELETE http://localhost:8080/articles/1
+#DELETE http://localhost:8080/articles/1
+#Content-Type: application/json
+
+
+#GET http://localhost:8080/articles/search-date?date=2024-01-01
+#Content-Type: application/json
+
+
+
+GET http://localhost:8080/articles/search-title?searchTerms=Spring Boot
 Content-Type: application/json
+
+Recherche par contenu
+
+GET http://localhost:8080/articles/search/content?keyword=Java
+
+
+Recherche par date
+
+GET http://localhost:8080/articles/search/createdAfter?date=2024-01-01
+
+
+Récupérer les 5 derniers articles
+
+GET http://localhost:8080/articles/latest
+
