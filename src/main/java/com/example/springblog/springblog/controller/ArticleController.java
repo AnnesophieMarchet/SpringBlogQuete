@@ -1,9 +1,11 @@
 package com.example.springblog.springblog.controller;
 
 import com.example.springblog.springblog.model.Article;
+import com.example.springblog.springblog.model.Category;
 import com.example.springblog.springblog.repository.ArticleRepository;
+import com.example.springblog.springblog.repository.CategoryRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +18,11 @@ public class ArticleController {
 
 
     private final ArticleRepository articleRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ArticleController(ArticleRepository articleRepository) {
+    public ArticleController(ArticleRepository articleRepository, CategoryRepository categoryRepository) {
         this.articleRepository = articleRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -43,21 +47,36 @@ public class ArticleController {
     public ResponseEntity<Article> createArticle(@RequestBody Article article) {
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
+        if(article.getCategory() != null) {
+            Category category = categoryRepository.findById(article.getCategory().getId()).orElse(null);
+            if (category == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            article.setCategory(category);
+        }
         Article newArticle = articleRepository.save(article);
         return ResponseEntity.status(HttpStatus.CREATED).body(newArticle);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article article) {
+    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
         Article articleToUpdate = articleRepository.findById(id).orElse(null);
         if (articleToUpdate == null) {
             return ResponseEntity.notFound().build();
         }
-        articleToUpdate.setTitle(article.getTitle());
-        articleToUpdate.setContent(article.getContent());
+        articleToUpdate.setTitle(articleDetails.getTitle());
+        articleToUpdate.setContent(articleDetails.getContent());
         articleToUpdate.setUpdatedAt(LocalDateTime.now());
-        articleRepository.save(articleToUpdate);
-        return ResponseEntity.ok(articleToUpdate);
+
+        if(articleDetails.getCategory() != null) {
+            Category category = categoryRepository.findById(articleDetails.getCategory().getId()).orElse(null);
+            if (category == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            articleToUpdate.setCategory(category);
+        }
+      Article updateArticle =  articleRepository.save(articleToUpdate);
+        return ResponseEntity.ok(updateArticle);
     }
 
     @DeleteMapping("/{id}")
