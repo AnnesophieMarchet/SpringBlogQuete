@@ -1,5 +1,5 @@
 package com.example.springblog.springblog.controller;
-
+import com.example.springblog.springblog.dto.ArticleDTO;
 import com.example.springblog.springblog.model.Article;
 import com.example.springblog.springblog.model.Category;
 import com.example.springblog.springblog.repository.ArticleRepository;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/articles")
@@ -25,28 +26,42 @@ public class ArticleController {
         this.categoryRepository = categoryRepository;
     }
 
+    private ArticleDTO convertToDto(Article article){
+       ArticleDTO articleDTO = new ArticleDTO();
+        articleDTO.setId(article.getId());
+        articleDTO.setTitle(article.getTitle());
+        articleDTO.setContent(article.getContent());
+        articleDTO.setUpdatedAt(article.getUpdatedAt());
+        if (article.getCategory() != null){
+            articleDTO.setCategoryName(article.getCategory().getName());
+        }
+        return articleDTO;
+    }
+
     @GetMapping
-    public ResponseEntity<List<Article>> getAllArticles() {
+    public ResponseEntity<List<ArticleDTO>> getAllArticles() {
         List<Article> articles = articleRepository.findAll();
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(articles);
+        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(articleDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Article> getAllArticleById(@PathVariable Long id) {
+    public ResponseEntity<ArticleDTO> getAllArticleById(@PathVariable Long id) {
      Article article = articleRepository.findById(id).orElse(null);
         if (article == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(article);
+        return ResponseEntity.ok(convertToDto(article));
     }
 
     @PostMapping
-    public ResponseEntity<Article> createArticle(@RequestBody Article article) {
+    public ResponseEntity<ArticleDTO> createArticle(@RequestBody Article article) {
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
+
         if(article.getCategory() != null) {
             Category category = categoryRepository.findById(article.getCategory().getId()).orElse(null);
             if (category == null) {
@@ -55,11 +70,11 @@ public class ArticleController {
             article.setCategory(category);
         }
         Article newArticle = articleRepository.save(article);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newArticle);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(newArticle));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
+    public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
         Article articleToUpdate = articleRepository.findById(id).orElse(null);
         if (articleToUpdate == null) {
             return ResponseEntity.notFound().build();
@@ -76,11 +91,11 @@ public class ArticleController {
             articleToUpdate.setCategory(category);
         }
       Article updateArticle =  articleRepository.save(articleToUpdate);
-        return ResponseEntity.ok(updateArticle);
+        return ResponseEntity.ok(convertToDto(updateArticle));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Article> deleteArticle(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
         Article article = articleRepository.findById(id).orElse(null);
         if (article == null) {
             return ResponseEntity.notFound().build();
@@ -90,39 +105,45 @@ public class ArticleController {
     }
 
     @GetMapping("/search-title")
-    public ResponseEntity <List<Article>> getArticleByTitle(@RequestParam String searchTitle) {
+    public ResponseEntity <List<ArticleDTO>> getArticleByTitle(@RequestParam String searchTitle) {
        List<Article> articles = articleRepository.findByTitle(searchTitle);
-        if (articles == null) {
+        if (articles.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(articles);
+        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(articleDTOs);
     }
 
     // Méthode pour liste d'articles dont le contenu contient une chaine de caractère fournie en paramètre
     @GetMapping("/search/content")
-    public ResponseEntity<List<Article>> getArticlesByContent(@RequestParam("content") String content) {
+    public ResponseEntity<List<ArticleDTO>> getArticlesByContent(@RequestParam("content") String content) {
         List<Article> articles = articleRepository.findByContentContaining(content);
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(articles);
+        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDto).collect(Collectors.toList());
+
+        return ResponseEntity.ok(articleDTOs);
     }
 
 
 
     // Méthode pour  des articles créés après une certaine date
     @GetMapping("/search/createdAfter")
-    public ResponseEntity<List<Article>> getArticlesCreatedAfter(@RequestParam("date") String date) {
+    public ResponseEntity<List<ArticleDTO>> getArticlesCreatedAfter(@RequestParam("date") String date) {
         LocalDateTime createdAt = LocalDateTime.parse(date);
         List<Article> articles = articleRepository.findByCreatedAtAfter(createdAt);
-        return articles.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(articles);
+
+        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDto).collect(Collectors.toList());
+        return articles.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(articleDTOs);
     }
 
     // Méthode  5 derniers articles créés
     @GetMapping("/latest")
-    public ResponseEntity<List<Article>> getFiveLastArticles() {
+    public ResponseEntity<List<ArticleDTO>> getFiveLastArticles() {
         List<Article> articles = articleRepository.findTop5ByOrderByCreatedAtDesc();
-        return articles.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(articles);
+        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDto).collect(Collectors.toList());
+        return articles.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(articleDTOs);
     }
 
 }
