@@ -1,71 +1,49 @@
 package com.example.springblog.springblog.controller;
 
 
-import com.example.springblog.springblog.dto.ArticleDTO;
 import com.example.springblog.springblog.dto.CategoryDTO;
 import com.example.springblog.springblog.model.Category;
-import com.example.springblog.springblog.repository.CategoryRepository;
+import com.example.springblog.springblog.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    // Injection du service CategoryService
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
-
-    private CategoryDTO convertToDTO(Category category) {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setId(category.getId());
-        categoryDTO.setName(category.getName());
-        if (category.getArticles() != null) {
-            categoryDTO.setArticles(category.getArticles().stream().map(article -> {
-                ArticleDTO articleDTO = new ArticleDTO();
-                articleDTO.setId(article.getId());
-                articleDTO.setTitle(article.getTitle());
-                articleDTO.setContent(article.getContent());
-                articleDTO.setUpdatedAt(article.getUpdatedAt());
-                articleDTO.setCategoryName(article.getCategory().getName());
-                return articleDTO;
-
-            }).collect(Collectors.toList()));
-        };
-        return categoryDTO;
-    };
 
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        if (categories.isEmpty()) {
+        List<CategoryDTO> categoryDTOS = categoryService.getAllCategories();
+        if (categoryDTOS.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<CategoryDTO> categoryDTOS = categories.stream().map(this::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(categoryDTOS);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
+        CategoryDTO categoryDTO = categoryService.getCategoryById(id);
+        if (categoryDTO == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(category));
+        return ResponseEntity.ok(categoryDTO);
     }
 
     @PostMapping
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody Category category) {
-        Category savedCategory = categoryRepository.save(category);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedCategory));
+        CategoryDTO savedCategory = categoryService.createCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
 }

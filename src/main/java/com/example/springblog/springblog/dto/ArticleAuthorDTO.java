@@ -4,7 +4,8 @@ public class ArticleAuthorDTO {
     private Long articleId;
     private Long authorId;
     private String contribution;
-
+    private String firstname;
+    private String lastname;
     public String getContribution() {
         return contribution;
     }
@@ -27,4 +28,10 @@ public class ArticleAuthorDTO {
     public void setAuthorId(Long authorId) {
         this.authorId = authorId;
     }
+
+    public String getFirstname() { return firstname; }
+    public void setFirstname(String firstname) { this.firstname = firstname; }
+
+    public String getLastname() { return lastname; }
+    public void setLastname(String lastname) { this.lastname = lastname; }
 }
