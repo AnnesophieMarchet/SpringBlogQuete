@@ -1,4 +1,5 @@
 package com.example.springblog.springblog.controller;
+import com.example.springblog.springblog.exeption.ArticleNotFoundException;
 import com.example.springblog.springblog.service.ArticleService;
 import com.example.springblog.springblog.dto.ArticleDTO;
 import com.example.springblog.springblog.model.*;
@@ -35,7 +36,7 @@ public class ArticleController {
     public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Long id) {
         ArticleDTO article = articleService.getArticleById(id);
         if (article == null) {
-            return ResponseEntity.notFound().build();
+            throw new ArticleNotFoundException("L'article avec l'id " + id + " n'a pas été trouvé");
         }
         return ResponseEntity.ok(article);
     }
