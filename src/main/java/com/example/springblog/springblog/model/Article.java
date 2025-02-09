@@ -4,6 +4,7 @@ package com.example.springblog.springblog.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class Article {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
 
@@ -38,7 +39,22 @@ public class Article {
     )
     private List<Image> images;
 
+
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticleAuthor> articleAuthors= new ArrayList<>();
+
+
     // Getters et setters
+
+    public List<ArticleAuthor> getArticleAuthors() {
+        return articleAuthors;
+    }
+
+    public void setArticleAuthors(List<ArticleAuthor> articleAuthors) {
+        this.articleAuthors = articleAuthors;
+    }
+
     public List<Image> getImages() {
         return images;
     }

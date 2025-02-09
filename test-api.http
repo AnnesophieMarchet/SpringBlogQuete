@@ -1,5 +1,5 @@
-GET http://localhost:8080/articles
-Content-Type: application/json
+#GET http://localhost:8080/articles
+#Content-Type: application/json
 
 # GET http://localhost:8080/articles/10
 #Content-Type: application/json
@@ -57,9 +57,74 @@ Content-Type: application/json
 #
 #GET http://localhost:8080/articles/latest
 
-POST http://localhost:8080/categories
+#POST http://localhost:8080/categories
+#Content-Type: application/json
+#
+#{
+#  "name": "Technology"
+#}
+
+#POST http://localhost:8080/articles
+#Content-Type: application/json
+#
+#{
+#  "title": "Mon nouvel article",
+#  "content": "Contenu du nouvel article",
+#  "categoryName": "Science",
+#  "imageUrls": ["https://example.com/image1.jpg"],
+#  "authors": [
+#    {
+#      "authorId": 1,
+#      "contribution": "Auteur principal"
+#    }
+#  ]
+#}
+
+#
+#POST http://localhost:8080/articles
+#Content-Type: application/json
+#
+#{
+#  "title": "Mon article lié à category 1",
+#  "content": "Voici le contenu de mon article.",
+#  "category": {
+#    "id": 1
+#  },
+#  "authors": [
+#    {
+#      "id": 1
+#    }
+#  ]
+#}
+
+
+#POST http://localhost:8080/authors
+#Content-Type: application/json
+#
+#{
+#  "firstname": "John",
+#  "lastname": "Doe"
+#}
+
+#GET http://localhost:8080/authors/1
+
+
+#PUT http://localhost:8080/authors/1
+#Content-Type: application/json
+#
+#{
+#  "firstname": "John",
+#  "lastname": "Updated"
+#}
+
+PUT http://localhost:8080/articles/1
 Content-Type: application/json
 
 {
-  "name": "Technology"
+  "title": "Mon nouvel article",
+  "content": "Contenu du nouvel article",
+  "categoryName": "Science",
+  "authors": [
+    { "id": 1 }
+  ]
 }

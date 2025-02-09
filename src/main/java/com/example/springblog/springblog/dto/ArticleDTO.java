@@ -1,6 +1,7 @@
 package com.example.springblog.springblog.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArticleDTO {
@@ -9,11 +10,17 @@ public class ArticleDTO {
     private String content;
     private LocalDateTime updatedAt;
     private String categoryName;
-
     public List<String> getImageUrls() {
         return imageUrls;
     }
+    private List<ArticleAuthorDTO> authors ;
 
+    public List<ArticleAuthorDTO> getAuthors() {
+        return authors;
+    }
+    public void setAuthors(List<ArticleAuthorDTO> authors) {
+        this.authors = authors;
+    }
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
