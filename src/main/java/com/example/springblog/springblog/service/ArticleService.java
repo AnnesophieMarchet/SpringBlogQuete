@@ -1,7 +1,10 @@
 package com.example.springblog.springblog.service;
 
 
+import com.example.springblog.springblog.dto.ArticleCreateDTO;
 import com.example.springblog.springblog.dto.ArticleDTO;
+import com.example.springblog.springblog.exeption.InvalidArticleDataException;
+import com.example.springblog.springblog.exeption.ResourceNotFoundException;
 import com.example.springblog.springblog.mapper.ArticleMapper;
 import com.example.springblog.springblog.model.*;
 import com.example.springblog.springblog.repository.*;
@@ -43,14 +46,18 @@ public class ArticleService {
     }
 
     public ArticleDTO getArticleById(Long id) {
-        Article article = articleRepository.findById(id).orElse(null);
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("L'article avec l'id " + id + " n'a pas été trouvé"));
         if (article == null) {
             return null;
         }
         return articleMapper.convertToDTO(article);
     }
 
-    public ArticleDTO createArticle(Article article) {
+    public ArticleDTO createArticle(ArticleCreateDTO articleCreateDTO) {
+        Article article = articleMapper.convertToEntity(articleCreateDTO);
+        if (article.getTitle() == null || article.getTitle().isEmpty()) {
+            throw new InvalidArticleDataException("Le titre de l'article est requis");
+        }
         article.setCreatedAt(LocalDateTime.now());
         article.setUpdatedAt(LocalDateTime.now());
 

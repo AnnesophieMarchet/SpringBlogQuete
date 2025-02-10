@@ -3,12 +3,14 @@ package com.example.springblog.springblog.mapper;
 import com.example.springblog.springblog.dto.ArticleAuthorDTO;
 import com.example.springblog.springblog.dto.AuthorDTO;
 import com.example.springblog.springblog.model.Author;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
 public class AuthorMapper {
 
-    private AuthorDTO convertToDTO(Author author){
+    public AuthorDTO convertToDTO(Author author){
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setId(author.getId());
         authorDTO.setFirstname(author.getFirstname());
