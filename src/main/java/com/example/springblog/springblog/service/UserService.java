@@ -1,5 +1,6 @@
 package com.example.springblog.springblog.service;
 
+import com.example.springblog.springblog.exeption.EmailAlreadyExistingException;
 import com.example.springblog.springblog.model.User;
 import com.example.springblog.springblog.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,9 +21,11 @@ public class UserService {
 
 
     public User registerUser(String email, String password, Set<String> roles) {
-        if(userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Cet email est déjà utilisé");
-        }
+
+            if (userRepository.existsByEmail(email)) {
+                throw new EmailAlreadyExistingException("L'email " + email + " est déjà utilisé.");
+            }
+
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password)); // Encodage du mot de passe avec BCrypt
