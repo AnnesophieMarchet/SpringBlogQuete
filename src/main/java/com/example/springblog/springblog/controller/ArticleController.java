@@ -1,8 +1,10 @@
 package com.example.springblog.springblog.controller;
+import com.example.springblog.springblog.dto.ArticleCreateDTO;
 import com.example.springblog.springblog.exeption.ArticleNotFoundException;
 import com.example.springblog.springblog.service.ArticleService;
 import com.example.springblog.springblog.dto.ArticleDTO;
 import com.example.springblog.springblog.model.*;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
@@ -41,12 +43,16 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
-    @PostMapping
-    public ResponseEntity<ArticleDTO> createArticle(@RequestBody Article article) {
-        ArticleDTO savedArticle = articleService.createArticle(article);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
-    }
-
+//    @PostMapping
+//    public ResponseEntity<ArticleDTO> createArticle(@RequestBody Article article) {
+//        ArticleDTO savedArticle = articleService.createArticle(article);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
+//    }
+@PostMapping
+public ResponseEntity<ArticleDTO> createArticle(@Valid @RequestBody ArticleCreateDTO articleCreateDTO) {
+    ArticleDTO savedArticleDTO = articleService.createArticle(articleCreateDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedArticleDTO);
+}
 
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {

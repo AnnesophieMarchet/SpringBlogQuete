@@ -1,6 +1,7 @@
 package com.example.springblog.springblog.service;
 
 
+import com.example.springblog.springblog.dto.ArticleCreateDTO;
 import com.example.springblog.springblog.dto.ArticleDTO;
 import com.example.springblog.springblog.exeption.InvalidArticleDataException;
 import com.example.springblog.springblog.exeption.ResourceNotFoundException;
@@ -52,7 +53,8 @@ public class ArticleService {
         return articleMapper.convertToDTO(article);
     }
 
-    public ArticleDTO createArticle(Article article) {
+    public ArticleDTO createArticle(ArticleCreateDTO articleCreateDTO) {
+        Article article = articleMapper.convertToEntity(articleCreateDTO);
         if (article.getTitle() == null || article.getTitle().isEmpty()) {
             throw new InvalidArticleDataException("Le titre de l'article est requis");
         }
